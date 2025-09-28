@@ -1,0 +1,28 @@
+# Ignore Terraform state and crash logs inside modules
+modules/**/.terraform/
+modules/**/.terraform.lock.hcl
+modules/**/*.tfstate
+modules/**/*.tfstate.*
+modules/**/*.tfvars.json
+
+# Ignore crash logs
+modules/**/crash.log
+modules/**/crash.*.log
+
+# Ignore Terraform plan files
+modules/**/*.tfplan
+
+# Ignore override files (local only)
+modules/**/*_override.tf
+modules/**/*_override.tf.json
+
+# Ignore local-only vars
+modules/**/terraform.tfvars
+modules/**/terraform.tfvars.json
+
+# Ignore backups
+modules/**/*.backup
+modules/**/*.bak
+
+# Ignore sensitive files
+.venv/
