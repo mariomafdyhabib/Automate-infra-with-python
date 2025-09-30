@@ -9,7 +9,7 @@ terraform {
 
 provider "google" {
   project = var.project
-  credentials = file(var.credentials_file)
+  # credentials = file(var.credentials_file)
 }
 
 # Reserve Global Static IP

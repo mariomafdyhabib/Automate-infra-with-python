@@ -214,7 +214,7 @@ python manage_modules.py destroy cloudrun
 
 ### CI/CD – GitHub Actions
 
-This repository ships with a ready‑to‑use workflow at .github/workflows/apply.yml that can run Terraform via the Python orchestrator on push or manual dispatch.
+This repository ships with a ready‑to‑use workflow at .github/workflows/apply&destroy.yml that can run Terraform via the Python orchestrator on push or manual dispatch.
 
 #### Triggers
 
