@@ -2,15 +2,15 @@
   "network": {
     "project": "playground-s-11-a5e8959a",
     "region": "us-central1",
-    "network_name": "auto-vpc",
-    "subnet_name": "auto-subnet",
+    "network_name": "mario-vpc",
+    "subnet_name": "mario-subnet",
     "subnet_cidr": "10.2.0.0/24"
   },
 
   "subnetwork": {
     "project": "playground-s-11-a5e8959a",
     "region": "us-central1",
-    "network_id": "projects/playground-s-11-a5e8959a/global/networks/auto-vpc",
+    "network_id": "projects/playground-s-11-a5e8959a/global/networks/mario-vpc",
     "subnets": [
       {"name": "app-subnet", "cidr": "10.30.1.0/24", "region": "us-central1"},
       {"name": "db-subnet", "cidr": "10.30.2.0/24", "region": "us-east1"}
@@ -22,7 +22,7 @@
     "region": "US",
     "buckets": [
       {
-        "name": "python-managed-bucket",
+        "name": "mario-bucket",
         "location": "US",
         "force_destroy": true,
         "uniform_bucket_level_access": true,
@@ -37,7 +37,7 @@
   "firewall": {
     "project": "playground-s-11-a5e8959a",
     "region": "us-central1",
-    "network_id": "projects/playground-s-11-a5e8959a/global/networks/auto-vpc",
+    "network_id": "projects/playground-s-11-a5e8959a/global/networks/mario-vpc",
     "firewall_rules": [
       {
         "name": "allow-ssh",
@@ -81,7 +81,7 @@
       "disk_size_gb": 10,
       "disk_type": "pd-standard",
       "image": "debian-cloud/debian-11",
-      "network": "auto-vpc",
+      "network": "mario-vpc",
       "subnetwork": "app-subnet",
       "tags": ["web", "dev"],
       "enable_public_ip": true,
@@ -96,7 +96,7 @@
       "disk_size_gb": 20,
       "disk_type": "pd-ssd",
       "image": "debian-cloud/debian-11",
-      "network": "auto-vpc",
+      "network": "mario-vpc",
       "subnetwork": "db-subnet",
       "tags": ["db"],
       "enable_public_ip": false,
@@ -111,7 +111,7 @@
     "project": "playground-s-11-a5e8959a",
     "region": "us-central1",
     "cluster_name": "my-gke-cluster",
-    "network": "projects/playground-s-11-a5e8959a/global/networks/auto-vpc",
+    "network": "projects/playground-s-11-a5e8959a/global/networks/mario-vpc",
     "subnetwork": "app-subnet",
     "node_count": 3,
     "machine_type": "e2-medium",
