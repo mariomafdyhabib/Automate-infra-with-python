@@ -15,7 +15,7 @@ terraform {
     bucket = "tf-state-${var.project_id}"
     prefix = "terraform/state"
   }
-}  
+}   
 
 provider "google" {
   project = var.project_id
