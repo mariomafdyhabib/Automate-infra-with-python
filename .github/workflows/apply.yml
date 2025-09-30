@@ -11,7 +11,7 @@ on:
         required: true
         default: "deploy"
       modules:
-        description: "Comma-separated list of modules"
+        description: "Comma-separated list of modules or 'all'"
         required: true
         default: "network"
 
@@ -54,7 +54,6 @@ jobs:
         run: |
           COMMIT_MSG="${{ github.event.head_commit.message }}"
 
-          # Default to workflow_dispatch if not push
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "action=${{ github.event.inputs.action }}" >> $GITHUB_OUTPUT
             echo "modules=${{ github.event.inputs.modules }}" >> $GITHUB_OUTPUT
@@ -67,7 +66,7 @@ jobs:
             echo "action=$ACTION" >> $GITHUB_OUTPUT
             echo "modules=$MODULES" >> $GITHUB_OUTPUT
           else
-            echo "⚠️ Commit message must match 'deploy:<module>' or 'destroy:<module1,module2>'"
+            echo "⚠️ Commit message must match 'deploy:<module>' or 'destroy:<module1,module2>' or 'destroy:all'"
             exit 1
           fi
 
@@ -75,12 +74,21 @@ jobs:
         run: |
           ACTION="${{ steps.parse.outputs.action }}"
           MODULES="${{ steps.parse.outputs.modules }}"
-          IFS=',' read -ra MODULE_ARRAY <<< "$MODULES"
 
+          if [ "$MODULES" = "all" ]; then
+            echo "🔎 Running $ACTION on ALL modules"
+            MODULES=$(ls -1 modules | tr '\n' ',')
+          fi
+
+          IFS=',' read -ra MODULE_ARRAY <<< "$MODULES"
           for MODULE in "${MODULE_ARRAY[@]}"; do
             MODULE=$(echo "$MODULE" | xargs) # trim spaces
-            echo "🚀 Running $ACTION on module: $MODULE"
-            python scripts/manage_modules.py "$ACTION" "$MODULE"
+            if [ -d "modules/$MODULE" ]; then
+              echo "🚀 Running $ACTION on module: $MODULE"
+              python scripts/manage_modules.py "$ACTION" "$MODULE"
+            else
+              echo "⚠️ Skipping unknown module: $MODULE"
+            fi
           done
 
       - name: Slack Notification on Success
