@@ -47,7 +47,6 @@ jobs:
       - name: Export GOOGLE_APPLICATION_CREDENTIALS
         run: echo "GOOGLE_APPLICATION_CREDENTIALS=$GITHUB_WORKSPACE/gcp-terraform-key.json" >> $GITHUB_ENV
 
-
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
@@ -74,7 +73,7 @@ jobs:
             exit 1
           fi
 
-            - name: Run Terraform for each module
+      - name: Run Terraform for each module
         id: tf_run
         run: |
           ACTION="${{ steps.parse.outputs.action }}"
@@ -98,7 +97,6 @@ jobs:
             fi
           done
 
-
       - name: Collect Terraform outputs
         if: success()
         run: |
@@ -110,7 +108,7 @@ jobs:
             fi
           done | tee -a tf_output.log
 
-            - name: Slack Notification on Success
+      - name: Slack Notification on Success
         if: success()
         run: |
           LOGS=$(tail -n 30 tf_output.log | sed 's/"/\\"/g')
