@@ -41,7 +41,7 @@ jobs:
 
       - name: Authenticate to Google Cloud
         run: |
-          echo '${{ secrets.PERSONAL_GCP_CREDENTIALS }}' > /tmp/credentials.json
+          echo '${{ secrets.PERSONAL_GCP_CREDENTIALS }}' > gcp-terraform-key.json
           gcloud config set project konecta-task-1-hands-on
 
       - name: Setup Terraform
