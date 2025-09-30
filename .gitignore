@@ -4,7 +4,11 @@ modules/**/.terraform.lock.hcl
 modules/**/*.tfstate
 modules/**/*.tfstate.*
 modules/**/*.tfvars.json
-
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfvars.json
 # Ignore crash logs
 modules/**/crash.log
 modules/**/crash.*.log
