@@ -116,24 +116,15 @@ jobs:
             STATUS=":x: Infra ${{ steps.parse.outputs.action }} failed for: ${{ steps.parse.outputs.modules }}"
           fi
 
-          # Clean logs: remove ANSI codes, {}, and extra spaces
-          LOGS=$(tail -n 50 tf_output.log \
-            | sed 's/\x1b\[[0-9;]*m//g' \        # strip color codes
-            | sed '/^{}/d' \                     # drop {}
-            | sed '/^{ *$/d' \                   # drop empty braces
-            | sed 's/^[[:space:]]*//' \          # trim leading spaces
-            | sed 's/[[:space:]]*$//' )          # trim trailing spaces
+          # Clean logs: remove ANSI color codes, {}, and blank lines
+          LOGS=$(tail -n 50 tf_output.log | sed 's/\x1b\[[0-9;]*m//g' | sed '/^{}/d' | sed '/^{ *$/d' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
 
-          # Extract only Terraform outputs (value fields)
+          # Extract only Terraform outputs ("value" fields)
           CLEAN_OUTPUTS=$(echo "$LOGS" | jq -r '.[]?.value' 2>/dev/null || true)
 
           # Merge everything nicely
           FINAL_LOGS=$(printf "%s\n%s" "$LOGS" "$CLEAN_OUTPUTS" | sed '/^$/N;/^\n$/D')
 
-          PAYLOAD=$(jq -n \
-            --arg text "$STATUS\nLogs:\n\`\`\`\n$FINAL_LOGS\n\`\`\`" \
-            '{text: $text}')
+          PAYLOAD=$(jq -n --arg text "$STATUS\nLogs:\n\`\`\`\n$FINAL_LOGS\n\`\`\`" '{text: $text}')
 
-          curl -X POST -H 'Content-type: application/json' \
-            --data "$PAYLOAD" \
-            ${{ secrets.SLACK_WEBHOOK_URL }}
+          curl -X POST -H 'Content-type: application/json' --data "$PAYLOAD" ${{ secrets.SLACK_WEBHOOK_URL }}
