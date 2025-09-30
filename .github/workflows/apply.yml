@@ -42,7 +42,11 @@ jobs:
       - name: Authenticate to Google Cloud
         run: |
           echo '${{ secrets.PERSONAL_GCP_CREDENTIALS }}' > gcp-terraform-key.json
-          gcloud config set project konecta-task-1-hands-on
+        #   gcloud config set project konecta-task-1-hands-on
+
+      - name: Export GOOGLE_APPLICATION_CREDENTIALS
+        run: echo "GOOGLE_APPLICATION_CREDENTIALS=$GITHUB_WORKSPACE/gcp-terraform-key.json" >> $GITHUB_ENV
+
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
