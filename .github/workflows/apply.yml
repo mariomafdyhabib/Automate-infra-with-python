@@ -108,7 +108,7 @@ jobs:
             fi
           done | tee -a tf_output.log
 
-            - name: Slack Notification (Success)
+      - name: Slack Notification (Success)
         if: success()
         run: |
           LOGS=$(tail -n 30 tf_output.log | jq -Rs .)
