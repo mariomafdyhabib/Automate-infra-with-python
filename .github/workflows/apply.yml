@@ -108,26 +108,20 @@ jobs:
             fi
           done | tee -a tf_output.log
 
-      - name: Slack Notification (Success)
-        if: success()
+      - name: Slack Notification
+        if: always()
         run: |
-          LOGS=$(tail -n 30 tf_output.log | jq -Rs .)
-          PAYLOAD=$(jq -n \
-            --arg text "✅ Infra ${{ steps.parse.outputs.action }} succeeded for: ${{ steps.parse.outputs.modules }}" \
-            --arg logs "$LOGS" \
-            '{text: ($text + "\nLogs:\n" + $logs)}')
-          curl -X POST -H 'Content-type: application/json' \
-            --data "$PAYLOAD" \
-            ${{ secrets.SLACK_WEBHOOK_URL }}
+          STATUS=":white_check_mark: Infra ${{ steps.parse.outputs.action }} succeeded for: ${{ steps.parse.outputs.modules }}"
+          if [ "${{ job.status }}" != "success" ]; then
+            STATUS=":x: Infra ${{ steps.parse.outputs.action }} failed for: ${{ steps.parse.outputs.modules }}"
+          fi
 
-      - name: Slack Notification (Failure)
-        if: failure()
-        run: |
-          LOGS=$(tail -n 30 tf_output.log | jq -Rs .)
+          LOGS=$(tail -n 30 tf_output.log)
+
           PAYLOAD=$(jq -n \
-            --arg text "❌ Infra ${{ steps.parse.outputs.action }} failed for: ${{ steps.parse.outputs.modules }}" \
-            --arg logs "$LOGS" \
-            '{text: ($text + "\nLogs:\n" + $logs)}')
+            --arg text "$STATUS\nLogs:\n\`\`\`\n$LOGS\n\`\`\`" \
+            '{text: $text}')
+
           curl -X POST -H 'Content-type: application/json' \
             --data "$PAYLOAD" \
             ${{ secrets.SLACK_WEBHOOK_URL }}
