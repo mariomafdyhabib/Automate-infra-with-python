@@ -29,7 +29,8 @@ def run_terraform(module_name, variables, action="apply"):
         tmpfile_path = tmpfile.name
 
     try:
-        if action == "apply":
+        if action == "deploy":
+            action = "apply"
             print(f"⚡ Applying {module_name}...")
             cmd = ["terraform", "apply", "-auto-approve", f"-var-file={tmpfile_path}"]
         elif action == "destroy":
