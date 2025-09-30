@@ -57,6 +57,7 @@ def main():
     target = sys.argv[2] if len(sys.argv) > 2 else "all"
 
     # Load config.json
+    SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
     CONFIG_PATH = os.path.join(SCRIPT_DIR, "../configs/config.json")
     with open(CONFIG_PATH) as f:
         configs = json.load(f)
