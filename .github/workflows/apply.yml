@@ -74,10 +74,12 @@ jobs:
             exit 1
           fi
 
-      - name: Run Terraform for each module
+            - name: Run Terraform for each module
+        id: tf_run
         run: |
           ACTION="${{ steps.parse.outputs.action }}"
           MODULES="${{ steps.parse.outputs.modules }}"
+          echo "" > tf_output.log
 
           if [ "$MODULES" = "all" ]; then
             echo "🔎 Running $ACTION on ALL modules"
@@ -88,23 +90,38 @@ jobs:
           for MODULE in "${MODULE_ARRAY[@]}"; do
             MODULE=$(echo "$MODULE" | xargs) # trim spaces
             if [ -d "modules/$MODULE" ]; then
-              echo "🚀 Running $ACTION on module: $MODULE"
-              python scripts/manage_modules.py "$ACTION" "$MODULE"
+              echo "🚀 Running $ACTION on module: $MODULE" | tee -a tf_output.log
+              python scripts/manage_modules.py "$ACTION" "$MODULE" 2>&1 | tee -a tf_output.log
+              echo "----------------------------------------" >> tf_output.log
             else
-              echo "⚠️ Skipping unknown module: $MODULE"
+              echo "⚠️ Skipping unknown module: $MODULE" | tee -a tf_output.log
             fi
           done
 
-      - name: Slack Notification on Success
+
+      - name: Collect Terraform outputs
         if: success()
         run: |
+          for MODULE in $(ls modules); do
+            if [ -d "modules/$MODULE" ]; then
+              cd modules/$MODULE
+              terraform output -json || echo "No outputs for $MODULE"
+              cd ../..
+            fi
+          done | tee -a tf_output.log
+
+            - name: Slack Notification on Success
+        if: success()
+        run: |
+          LOGS=$(tail -n 30 tf_output.log | sed 's/"/\\"/g')
           curl -X POST -H 'Content-type: application/json' \
-            --data '{"text":"✅ Infra ${{ steps.parse.outputs.action }} succeeded for: ${{ steps.parse.outputs.modules }}"}' \
+            --data "{\"text\":\"✅ Infra ${{ steps.parse.outputs.action }} succeeded for: ${{ steps.parse.outputs.modules }}\n\`\`\`$LOGS\`\`\`\"}" \
             ${{ secrets.SLACK_WEBHOOK_URL }}
 
       - name: Slack Notification on Failure
         if: failure()
         run: |
+          LOGS=$(tail -n 30 tf_output.log | sed 's/"/\\"/g')
           curl -X POST -H 'Content-type: application/json' \
-            --data '{"text":"❌ Infra ${{ steps.parse.outputs.action }} failed for: ${{ steps.parse.outputs.modules }}"}' \
+            --data "{\"text\":\"❌ Infra ${{ steps.parse.outputs.action }} failed for: ${{ steps.parse.outputs.modules }}\n\`\`\`$LOGS\`\`\`\"}" \
             ${{ secrets.SLACK_WEBHOOK_URL }}
