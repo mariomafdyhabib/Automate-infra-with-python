@@ -108,18 +108,18 @@ jobs:
             fi
           done | tee -a tf_output.log
 
-      - name: Slack Notification on Success
+            - name: Slack Notification on Success
         if: success()
         run: |
-          LOGS=$(tail -n 30 tf_output.log | sed 's/"/\\"/g')
+          LOGS=$(tail -n 30 tf_output.log | jq -Rs .)
           curl -X POST -H 'Content-type: application/json' \
-            --data "{\"text\":\"✅ Infra ${{ steps.parse.outputs.action }} succeeded for: ${{ steps.parse.outputs.modules }}\n\`\`\`$LOGS\`\`\`\"}" \
+            --data "{\"text\":\"✅ Infra ${{ steps.parse.outputs.action }} succeeded for: ${{ steps.parse.outputs.modules }}\nLogs:\n$LOGS\"}" \
             ${{ secrets.SLACK_WEBHOOK_URL }}
 
       - name: Slack Notification on Failure
         if: failure()
         run: |
-          LOGS=$(tail -n 30 tf_output.log | sed 's/"/\\"/g')
+          LOGS=$(tail -n 30 tf_output.log | jq -Rs .)
           curl -X POST -H 'Content-type: application/json' \
-            --data "{\"text\":\"❌ Infra ${{ steps.parse.outputs.action }} failed for: ${{ steps.parse.outputs.modules }}\n\`\`\`$LOGS\`\`\`\"}" \
+            --data "{\"text\":\"❌ Infra ${{ steps.parse.outputs.action }} failed for: ${{ steps.parse.outputs.modules }}\nLogs:\n$LOGS\"}" \
             ${{ secrets.SLACK_WEBHOOK_URL }}
