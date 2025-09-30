@@ -5,7 +5,7 @@ import subprocess
 import tempfile
 import os
 
-BASE_DIR = "modules"
+BASE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../modules")
 
 def run_terraform(module_name, variables, action="apply"):
     """
@@ -57,7 +57,7 @@ def main():
     target = sys.argv[2] if len(sys.argv) > 2 else "all"
 
     # Load config.json
-    with open("config.json") as f:
+    with open("../configs/config.json") as f:
         configs = json.load(f)
 
     if target != "all":
