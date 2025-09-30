@@ -36,9 +36,6 @@ resource "google_container_cluster" "primary" {
   enable_shielded_nodes = var.enable_shielded_nodes
 
   master_auth {
-    username = ""
-    password = ""
-
     client_certificate_config {
       issue_client_certificate = false
     }

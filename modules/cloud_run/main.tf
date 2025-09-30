@@ -43,10 +43,10 @@ resource "google_cloud_run_service" "default" {
     }
   }
 
-  traffics {
-    percent         = 100
-    latest_revision = true
-  }
+  # traffics {
+  #   percent         = 100
+  #   latest_revision = true
+  # }
 }
 
 # IAM Binding (Public or Restricted)

@@ -14,14 +14,14 @@ provider "google" {
 }
 
 # SSL Certificate
-resource "google_compute_managed_ssl_certificate" "default" {
-  count = var.use_managed_ssl ? 1 : 0
+# resource "google_compute_managed_ssl_certificate" "default" {
+#   count = var.use_managed_ssl ? 1 : 0
 
-  name = "${var.name}-managed-cert"
-  managed {
-    domains = var.domains
-  }
-}
+#   name = "${var.name}-managed-cert"
+#   managed {
+#     domains = var.domains
+#   }
+# }
 
 resource "google_compute_ssl_certificate" "self_signed" {
   count = var.use_managed_ssl ? 0 : 1
@@ -70,10 +70,9 @@ resource "google_compute_target_https_proxy" "default" {
   name    = "${var.name}-https-proxy"
   url_map = google_compute_url_map.default.id
 
-  ssl_certificates = var.use_managed_ssl ? 
-    [google_compute_managed_ssl_certificate.default[0].id] : 
-    [google_compute_ssl_certificate.self_signed[0].id]
+  ssl_certificates = [google_compute_ssl_certificate.self_signed[0].id]
 }
+
 
 # Global Forwarding Rule
 resource "google_compute_global_forwarding_rule" "default" {

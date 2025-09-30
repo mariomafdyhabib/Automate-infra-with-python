@@ -37,6 +37,6 @@ resource "google_project_iam_binding" "bindings" {
   for_each = { for idx, binding in var.bindings : idx => binding }
 
   project = var.project
-  role    = binding.role
-  members = binding.members
+  role    = each.value.role
+  members = each.value.members
 }

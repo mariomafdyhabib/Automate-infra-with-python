@@ -1,6 +1,6 @@
 {
   "network": {
-    "project": "playground-s-11-cfff98e5",
+    "project": "playground-s-11-a8d0d4ad",
     "region": "us-central1",
     "network_name": "auto-vpc",
     "subnet_name": "auto-subnet",
@@ -8,9 +8,9 @@
   },
 
   "subnetwork": {
-    "project": "playground-s-11-cfff98e5",
+    "project": "playground-s-11-a8d0d4ad",
     "region": "us-central1",
-    "network_id": "projects/playground-s-11-cfff98e5/global/networks/auto-vpc",
+    "network_id": "projects/playground-s-11-a8d0d4ad/global/networks/auto-vpc",
     "subnets": [
       {"name": "app-subnet", "cidr": "10.30.1.0/24", "region": "us-central1"},
       {"name": "db-subnet", "cidr": "10.30.2.0/24", "region": "us-east1"}
@@ -18,7 +18,7 @@
   },
 
   "storage_bucket": {
-    "project": "playground-s-11-cfff98e5",
+    "project": "playground-s-11-a8d0d4ad",
     "region": "US",
     "buckets": [
       {
@@ -35,9 +35,9 @@
   },
 
   "firewall": {
-    "project": "playground-s-11-cfff98e5",
+    "project": "playground-s-11-a8d0d4ad",
     "region": "us-central1",
-    "network_id": "projects/playground-s-11-cfff98e5/global/networks/auto-vpc",
+    "network_id": "projects/playground-s-11-a8d0d4ad/global/networks/auto-vpc",
     "firewall_rules": [
       {
         "name": "allow-ssh",
@@ -58,7 +58,7 @@
   },
 
   "cloudsql": {
-    "project": "playground-s-11-cfff98e5",
+    "project": "playground-s-11-a8d0d4ad",
     "region": "us-central1",
     "db_instance_name": "my-sql-instance",
     "db_version": "POSTGRES_14",
@@ -70,36 +70,48 @@
   },
 
   "compute_instance": {
-    "project": "playground-s-11-cfff98e5",
-    "region": "us-central1",
-    "zone": "us-central1-a",
-    "instances": [
-      {
-        "name": "web-instance",
-        "machine_type": "e2-medium",
-        "disk_size": 20,
-        "image": "debian-cloud/debian-11",
-        "network": "auto-vpc",
-        "subnetwork": "app-subnet",
-        "tags": ["web", "dev"]
-      },
-      {
-        "name": "db-instance",
-        "machine_type": "e2-small",
-        "disk_size": 50,
-        "image": "debian-cloud/debian-11",
-        "network": "auto-vpc",
-        "subnetwork": "db-subnet",
-        "tags": ["db"]
+  "project": "playground-s-11-a8d0d4ad",
+  "region": "us-central1",
+  "zone": "us-central1-a",
+  "instances": [
+    {
+      "name": "web-instance",
+      "machine_type": "e2-medium",
+      "zone": "us-central1-a",
+      "disk_size_gb": 10,
+      "disk_type": "pd-standard",
+      "image": "debian-cloud/debian-11",
+      "network": "auto-vpc",
+      "subnetwork": "app-subnet",
+      "tags": ["web", "dev"],
+      "enable_public_ip": true,
+      "metadata": {
+        "startup-script": "echo Hello from Web VM"
       }
+    },
+    {
+      "name": "db-instance",
+      "machine_type": "e2-small",
+      "zone": "us-east1-b",
+      "disk_size_gb": 20,
+      "disk_type": "pd-ssd",
+      "image": "debian-cloud/debian-11",
+      "network": "auto-vpc",
+      "subnetwork": "db-subnet",
+      "tags": ["db"],
+      "enable_public_ip": false,
+      "metadata": {
+        "startup-script": "echo Hello from DB VM"
+      }
+    }
     ]
   },
 
   "gke_cluster": {
-    "project": "playground-s-11-cfff98e5",
+    "project": "playground-s-11-a8d0d4ad",
     "region": "us-central1",
     "cluster_name": "my-gke-cluster",
-    "network": "projects/playground-s-11-cfff98e5/global/networks/auto-vpc",
+    "network": "projects/playground-s-11-a8d0d4ad/global/networks/auto-vpc",
     "subnetwork": "app-subnet",
     "node_count": 3,
     "machine_type": "e2-medium",
@@ -107,7 +119,7 @@
   },
 
   "pubsub": {
-    "project": "playground-s-11-cfff98e5",
+    "project": "playground-s-11-a8d0d4ad",
     "topics": [
       {
         "name": "user-events",
@@ -118,8 +130,8 @@
     ]
   },
 
-  "loadbalancer": {
-    "project": "playground-s-11-cfff98e5",
+  "load_balancer": {
+    "project": "playground-s-11-a8d0d4ad",
     "region": "us-central1",
     "backend_service_name": "my-backend",
     "health_check_port": 80,
@@ -129,29 +141,29 @@
   },
 
   "iam": {
-    "project": "playground-s-11-cfff98e5",
+    "project": "playground-s-11-a8d0d4ad",
     "bindings": [
       {
         "role": "roles/viewer",
-        "members": ["user:viewer@example.com"]
+        "members": ["user:cloud_user_p_db3c4a63@linuxacademygclabs.com"]
       },
       {
         "role": "roles/storage.admin",
-        "members": ["serviceAccount:svc-123@playground-s-11-cfff98e5.iam.gserviceaccount.com"]
+        "members": ["serviceAccount:cli-service-account-1@playground-s-11-a8d0d4ad.iam.gserviceaccount.com"]
       }
     ]
   },
 
   "cloudrun": {
-    "project": "playground-s-11-cfff98e5",
+    "project": "playground-s-11-a8d0d4ad",
     "region": "us-central1",
     "service_name": "my-cloudrun-service",
-    "image": "gcr.io/playground-s-11-cfff98e5/my-app:latest",
+    "image": "gcr.io/playground-s-11-a8d0d4ad/my-app:latest",
     "allow_unauthenticated": true
   },
 
   "cdn_and_dns": {
-    "project": "playground-s-11-cfff98e5",
+    "project": "playground-s-11-a8d0d4ad",
     "region": "us-central1",
     "dns_managed_zone": "my-zone",
     "dns_name": "example.com.",

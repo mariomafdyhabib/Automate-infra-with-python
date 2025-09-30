@@ -42,3 +42,11 @@ resource "google_storage_bucket" "buckets" {
     }
   }
 }
+# Grant Storage Admin role to the service account
+resource "google_storage_bucket_iam_member" "bucket_admin" {
+  for_each = google_storage_bucket.buckets
+
+  bucket = each.value.name
+  role   = "roles/storage.admin"
+  member = "serviceAccount:cli-service-account-1@playground-s-11-a8d0d4ad.iam.gserviceaccount.com"
+}
