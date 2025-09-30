@@ -123,3 +123,4 @@ jobs:
           curl -X POST -H 'Content-type: application/json' \
             --data "{\"text\":\"❌ Infra ${{ steps.parse.outputs.action }} failed for: ${{ steps.parse.outputs.modules }}\n\`\`\`$LOGS\`\`\`\"}" \
             ${{ secrets.SLACK_WEBHOOK_URL }}
+ 
