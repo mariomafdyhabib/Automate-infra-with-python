@@ -223,4 +223,4 @@ python manage_modules.py apply gke_cluster
 
 ## Destroy only Cloud Run:
 
-python manage_modules.py destroy cloudrun
+python manage_modules.py destroy cloudrun 
