@@ -31,3 +31,4 @@ modules/**/*.bak
 # Ignore sensitive files
 .venv/
 modules/**/gcp-terraform-key.json
+gcp-terraform-key.json
