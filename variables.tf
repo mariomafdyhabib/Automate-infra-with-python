@@ -224,3 +224,8 @@ variable "required_apis" {
     "dns.googleapis.com"
   ]
 }
+variable "credentials_file" {
+  description = "Path to GCP credentials file"
+  type        = string
+  default = "gcp-terraform-key.json"
+}

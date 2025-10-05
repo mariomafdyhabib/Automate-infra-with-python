@@ -11,16 +11,17 @@ terraform {
     }
   }
 
-  backend "gcs" {
-    bucket = "tf-state-${var.project_id}"
-    prefix = "terraform/state"
-  }
+  # backend "gcs" {
+  #   bucket = "tf-state-${var.project_id}"
+  #   prefix = "terraform/state"
+  # }
 }   
 
 provider "google" {
   project = var.project_id
   region  = var.region
   zone    = var.zone
+  credentials = file(var.credentials_file)
 }
 
 provider "google-beta" {
@@ -56,6 +57,7 @@ module "subnetwork" {
   region          = var.region
   network_id      = module.network.network_id
   subnets         = module.subnetwork.var.subnets
+  credentials_file = var.credentials_file
 
 }
 
@@ -97,9 +99,10 @@ module "cloud_sql" {
   database_version  = var.database_version
   tier              = var.db_tier
   disk_size         = var.db_disk_size
-  db_name           = var.db_name
-  db_user           = var.db_user
-  db_password       = var.db_password
+  db_name           = module.cloud_sql.db_name
+  db_user           = module.cloud_sql.db_user
+  db_password       = module.cloud_sql.db_password
+  
 
 }
 
@@ -109,12 +112,11 @@ module "compute_instance" {
 
   project      = var.project_id
   zone         = var.zone
-  name         = var.instance_name
-  type         = var.machine_type
-  image        = var.image
   network      = module.network.network_name
   subnetwork   = module.subnetwork.subnet_names[0]
-
+  instance_name = module.compute_instance.instances.name
+  machine_type  = module.compute_instance.instances.machine_type
+  image         = module.compute_instance.instances.image
 }
 
 # GKE Cluster Module
