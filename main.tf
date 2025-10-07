@@ -11,34 +11,17 @@ terraform {
     }
   }
 
-  # backend "gcs" {
-  #   bucket = "tf-state-${var.project}"
-  #   prefix = "terraform/state"
-  # }
+
 }   
 
 provider "google" {
   project = var.project
   region  = var.region
   zone    = var.zone
-  credentials = file(var.credentials_file)
+  # credentials = file(var.credentials_file)
 }
 
-# provider "google-beta" {
-#   project = var.project
-#   region  = var.region
-#   zone    = var.zone
-# }
 
-# Enable required APIs
-# resource "google_project_service" "apis" {
-#   # for_each = toset(var.required_apis)
-#   project  = var.project
-#   service  = each.key
-
-#   disable_dependent_services = true
-#   disable_on_destroy         = false
-# }
 
 # Network Module
 module "network" {
