@@ -87,7 +87,7 @@ module "firewall" {
   network_id     = module.network.network_id
   firewall_rules = module.firewall.var.firewall_rules
 
-}
+} 
 
 # Cloud SQL Module
 module "cloud_sql" {
