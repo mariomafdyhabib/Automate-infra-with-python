@@ -164,7 +164,15 @@ variable "lb_backend_config" {
   type        = map(any)
   default     = {}
 }
+variable "lb_ip_address" {
+  description = "The IP address for the load balancer"
+  type        = string
+}
 
+variable "lb_backend_group" {
+  description = "The backend group for the load balancer"
+  type        = string
+}
 # IAM Variables
 variable "iam_roles" {
   description = "List of IAM roles to assign"
@@ -184,7 +192,10 @@ variable "cloud_run_service_name" {
   type        = string
   default     = "my-service"
 }
-
+variable "cloud_run_image" {
+  description = "The container image to deploy for Cloud Run"
+  type        = string
+}
 # CDN & DNS Variables
 variable "dns_zones" {
   description = "List of DNS zones to create"

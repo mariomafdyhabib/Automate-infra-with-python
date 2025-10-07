@@ -114,9 +114,9 @@ module "compute_instance" {
   zone         = var.zone
   network      = module.network.network_name
   subnetwork   = module.subnetwork.subnet_names[0]
-  instance_name = module.compute_instance.instances.name
-  machine_type  = module.compute_instance.instances.machine_type
-  image         = module.compute_instance.instances.image
+  instance_name = var.instance_name
+  machine_type  = var.machine_type
+  image         = var.image
 }
 
 # GKE Cluster Module
