@@ -8,27 +8,9 @@ terraform {
 }
 
 provider "google" {
-  project = var.project
-  region  = var.region
+  project     = var.project
+  region      = var.region
   # credentials = file(var.credentials_file)
-}
-
-# SSL Certificate
-# resource "google_compute_managed_ssl_certificate" "default" {
-#   count = var.use_managed_ssl ? 1 : 0
-
-#   name = "${var.name}-managed-cert"
-#   managed {
-#     domains = var.domains
-#   }
-# }
-
-resource "google_compute_ssl_certificate" "self_signed" {
-  count = var.use_managed_ssl ? 0 : 1
-
-  name        = "${var.name}-self-cert"
-  private_key = file(var.private_key_path)
-  certificate = file(var.certificate_path)
 }
 
 # Backend Service
@@ -40,7 +22,7 @@ resource "google_compute_backend_service" "default" {
   timeout_sec           = 30
 
   backend {
-    group = var.backend_group
+    group = google_compute_instance_group.default.self_link
   }
 
   health_checks = [google_compute_health_check.default.id]
@@ -48,10 +30,10 @@ resource "google_compute_backend_service" "default" {
 
 # Health Check
 resource "google_compute_health_check" "default" {
-  name               = "${var.name}-hc"
-  check_interval_sec = 5
-  timeout_sec        = 5
-  healthy_threshold  = 2
+  name                = "${var.name}-hc"
+  check_interval_sec  = 5
+  timeout_sec         = 5
+  healthy_threshold   = 2
   unhealthy_threshold = 2
 
   http_health_check {
@@ -65,20 +47,23 @@ resource "google_compute_url_map" "default" {
   default_service = google_compute_backend_service.default.id
 }
 
-# HTTPS Proxy
-resource "google_compute_target_https_proxy" "default" {
-  name    = "${var.name}-https-proxy"
+# HTTP Proxy (replaces HTTPS proxy)
+resource "google_compute_target_http_proxy" "default" {
+  name    = "${var.name}-http-proxy"
   url_map = google_compute_url_map.default.id
-
-  ssl_certificates = [google_compute_ssl_certificate.self_signed[0].id]
 }
 
-
-# Global Forwarding Rule
+# Global Forwarding Rule for HTTP (port 80)
 resource "google_compute_global_forwarding_rule" "default" {
   name                  = "${var.name}-fwd-rule"
-  target                = google_compute_target_https_proxy.default.id
-  port_range            = "443"
+  target                = google_compute_target_http_proxy.default.id
+  port_range            = "80"
   load_balancing_scheme = "EXTERNAL"
   ip_address            = var.ip_address
 }
+resource "google_compute_instance_group" "default" {
+  name        = "${var.name}-backend-group"
+  zone        = "us-central1-a"
+  description = "Instance group for backend servers"
+}
+

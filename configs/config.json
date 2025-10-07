@@ -1,6 +1,6 @@
 {
   "network": {
-    "project": "playground-s-11-794bd0d8",
+    "project": "playground-s-11-4dd577ac",
     "region": "us-central1",
     "network_name": "mario-vpc",
     "subnet_name": "mario-subnet",
@@ -8,9 +8,9 @@
   },
 
   "subnetwork": {
-    "project": "playground-s-11-794bd0d8",
+    "project": "playground-s-11-4dd577ac",
     "region": "us-central1",
-    "network_id": "projects/playground-s-11-794bd0d8/global/networks/mario-vpc",
+    "network_id": "projects/playground-s-11-4dd577ac/global/networks/mario-vpc",
     "subnets": [
       {"name": "app-subnet", "cidr": "10.30.1.0/24", "region": "us-central1"},
       {"name": "db-subnet", "cidr": "10.30.2.0/24", "region": "us-east1"}
@@ -18,11 +18,11 @@
   },
 
   "storage_bucket": {
-    "project": "playground-s-11-794bd0d8",
+    "project": "playground-s-11-4dd577ac",
     "region": "US",
     "buckets": [
       {
-        "name": "mario-bucket",
+        "name": "mariomafdy1-bucket",
         "location": "US",
         "force_destroy": true,
         "uniform_bucket_level_access": true,
@@ -35,9 +35,9 @@
   },
 
   "firewall": {
-    "project": "playground-s-11-794bd0d8",
+    "project": "playground-s-11-4dd577ac",
     "region": "us-central1",
-    "network_id": "projects/playground-s-11-794bd0d8/global/networks/mario-vpc",
+    "network_id": "projects/playground-s-11-4dd577ac/global/networks/mario-vpc",
     "firewall_rules": [
       {
         "name": "allow-ssh",
@@ -57,20 +57,20 @@
     ]
   },
 
-  "cloudsql": {
-    "project": "playground-s-11-794bd0d8",
+  "cloud_sql": {
+    "project": "playground-s-11-4dd577ac",
     "region": "us-central1",
-    "db_instance_name": "my-sql-instance",
-    "db_version": "POSTGRES_14",
+    "instance_name": "my-sql-instance",
+    "database_version": "POSTGRES_14",
     "tier": "db-f1-micro",
     "disk_size": 20,
-    "database_name": "appdb",
-    "user": "appuser",
-    "password": "securepassword123"
+    "db_name": "appdb",
+    "db_user": "appuser",
+    "db_password": "securepassword123"
   },
 
   "compute_instance": {
-  "project": "playground-s-11-794bd0d8",
+  "project": "playground-s-11-4dd577ac",
   "region": "us-central1",
   "zone": "us-central1-a",
   "instances": [
@@ -108,10 +108,10 @@
   },
 
   "gke_cluster": {
-    "project": "playground-s-11-794bd0d8",
+    "project": "playground-s-11-4dd577ac",
     "region": "us-central1",
     "cluster_name": "my-gke-cluster",
-    "network": "projects/playground-s-11-794bd0d8/global/networks/mario-vpc",
+    "network": "projects/playground-s-11-4dd577ac/global/networks/mario-vpc",
     "subnetwork": "app-subnet",
     "node_count": 3,
     "machine_type": "e2-medium",
@@ -119,29 +119,54 @@
   },
 
   "pubsub": {
-    "project": "playground-s-11-794bd0d8",
-    "topics": [
-      {
-        "name": "user-events",
-        "subscriptions": [
-          {"name": "user-events-sub", "ack_deadline_seconds": 20}
-        ]
+  "project": "playground-s-11-4dd577ac",
+  "region": "us-central1",
+  "credentials_file": "gcp-terraform-key.json",
+  
+  "topics": [
+    {
+      "name": "user-events",
+      "message_retention_duration": "604800s",
+      "labels": {
+        "env": "dev"
       }
-    ]
-  },
+    }
+  ],
+
+  "subscriptions": [
+    {
+      "name": "user-events-sub",
+      "topic_index": 0,
+      "ack_deadline_seconds": 20,
+      "retain_acked_messages": true,
+      "expiration_ttl": "2678400s",
+      "min_backoff": "10s",
+      "max_backoff": "600s",
+      "dead_letter_topic": null,
+      "max_delivery_attempts": 5,
+      "labels": {
+        "env": "dev"
+      }
+    }
+  ],
+
+  "dead_letter_topics": []
+}
+,
 
   "load_balancer": {
-    "project": "playground-s-11-794bd0d8",
+    "project": "playground-s-11-4dd577ac",
     "region": "us-central1",
-    "backend_service_name": "my-backend",
+    "backend_group": "my-backend",
     "health_check_port": 80,
     "forwarding_rule_name": "http-rule",
     "ip_protocol": "TCP",
-    "target_port": 80
+    "target_port": 80,
+    "name": "my-load-balancer"
   },
 
   "iam": {
-    "project": "playground-s-11-794bd0d8",
+    "project": "playground-s-11-4dd577ac",
     "bindings": [
       {
         "role": "roles/viewer",
@@ -149,13 +174,13 @@
       },
       {
         "role": "roles/storage.admin",
-        "members": ["serviceAccount:cli-service-account-1@playground-s-11-794bd0d8.iam.gserviceaccount.com"]
+        "members": ["serviceAccount:cli-service-account-1@playground-s-11-4dd577ac.iam.gserviceaccount.com"]
       }
     ]
   },
 
   "cloud_run": {
-    "project": "playground-s-11-794bd0d8",
+    "project": "playground-s-11-4dd577ac",
     "region": "us-central1",
     "service_name": "my-cloudrun-service",
     "image": "mariomafdy/teamavailtest:latest",
@@ -163,7 +188,7 @@
   },
 
   "cdn_and_dns": {
-    "project": "playground-s-11-794bd0d8",
+    "project": "playground-s-11-4dd577ac",
     "region": "us-central1",
     "dns_managed_zone": "my-zone",
     "dns_name": "example.com.",

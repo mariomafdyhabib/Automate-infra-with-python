@@ -38,5 +38,5 @@ variable "subnets" {
 variable "credentials_file" {
   description = "Path to GCP credentials file"
   type        = string
-  # default = "gcp-terraform-key.json"
+  default = "gcp-terraform-key.json"
 }

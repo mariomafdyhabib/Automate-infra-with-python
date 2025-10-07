@@ -23,12 +23,12 @@ resource "google_pubsub_topic" "topics" {
 }
 
 # Dead Letter Topics (optional)
-resource "google_pubsub_topic" "dead_letter_topics" {
-  for_each = { for idx, t in var.dead_letter_topics : idx => t }
+# resource "google_pubsub_topic" "dead_letter_topics" {
+#   for_each = { for idx, t in var.dead_letter_topics : idx => t }
 
-  name   = t.value.name
-  labels = t.value.labels
-}
+#   name   = t.value.name
+#   labels = t.value.labels
+# }
 
 # Subscriptions
 resource "google_pubsub_subscription" "subscriptions" {
