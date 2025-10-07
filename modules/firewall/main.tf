@@ -32,5 +32,5 @@ resource "google_compute_firewall" "rules" {
   target_tags             = lookup(each.value, "target_tags", null)
   destination_ranges      = lookup(each.value, "destination_ranges", null)
   disabled                = lookup(each.value, "disabled", false)
-  enable_logging          = lookup(each.value, "enable_logging", false)
+  # enable_logging          = lookup(each.value, "enable_logging", false)
 }

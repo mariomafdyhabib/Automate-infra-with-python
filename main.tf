@@ -116,7 +116,7 @@ module "compute_instance" {
   subnetwork   = module.subnetwork.subnet_names[0]
   # instance_name = var.instance_name
   # machine_type  = var.machine_type
-  # image         = var.image 
+  # image         = var.image  
 }
 
 # GKE Cluster Module
