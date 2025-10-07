@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCP Terraform Infrastructure</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #f8f9fa;
+            font-family: 'Google Sans', Arial, sans-serif;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #202124;
+            margin-bottom: 30px;
+        }
+        .diagram {
+            position: relative;
+            width: 100%;
+            height: 900px;
+        }
+        .section {
+            position: absolute;
+            border: 2px solid #dadce0;
+            border-radius: 8px;
+            padding: 15px;
+            background: #f8f9fa;
+        }
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #5f6368;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+        .module {
+            background: white;
+            border: 2px solid #4285f4;
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin: 8px 0;
+            font-size: 13px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .module:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .module-name {
+            font-weight: 600;
+            color: #1967d2;
+        }
+        .module-desc {
+            color: #5f6368;
+            font-size: 11px;
+            margin-top: 4px;
+        }
+        .root-files {
+            background: #e8f0fe;
+            border-color: #1967d2;
+        }
+        .gcp-resource {
+            background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+            color: white;
+            border: none;
+        }
+        .gcp-resource .module-desc {
+            color: rgba(255,255,255,0.9);
+        }
+        .arrow {
+            position: absolute;
+            height: 2px;
+            background: #4285f4;
+            transform-origin: left center;
+            opacity: 0.3;
+        }
+        .arrow::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: -4px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid #4285f4;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+        }
+        .legend {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+        .legend-box {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        .download-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #4285f4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .download-btn:hover {
+            background: #1967d2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="download-btn" onclick="downloadDiagram()">Download as PNG</button>
+        <h1>GCP Infrastructure Automation with Terraform</h1>
+        
+        <div class="diagram" id="diagram">
+            <!-- Repository Structure -->
+            <div class="section" style="left: 20px; top: 20px; width: 300px;">
+                <div class="section-title">📁 Repository Structure</div>
+                <div class="module root-files">
+                    <div class="module-name">main.tf</div>
+                    <div class="module-desc">Root configuration</div>
+                </div>
+                <div class="module root-files">
+                    <div class="module-name">variables.tf</div>
+                    <div class="module-desc">Input variables</div>
+                </div>
+                <div class="module root-files">
+                    <div class="module-name">output.tf</div>
+                    <div class="module-desc">Output values</div>
+                </div>
+                <div class="module root-files">
+                    <div class="module-name">configs/config.json</div>
+                    <div class="module-desc">Configuration file</div>
+                </div>
+                <div class="module root-files">
+                    <div class="module-name">scripts/manage_modules.py</div>
+                    <div class="module-desc">Python automation</div>
+                </div>
+            </div>
+
+            <!-- Network Layer -->
+            <div class="section" style="left: 360px; top: 20px; width: 280px;">
+                <div class="section-title">🌐 Network Layer</div>
+                <div class="module">
+                    <div class="module-name">network/</div>
+                    <div class="module-desc">VPC Network configuration</div>
+                </div>
+                <div class="module">
+                    <div class="module-name">subnetwork/</div>
+                    <div class="module-desc">Subnet definitions</div>
+                </div>
+                <div class="module">
+                    <div class="module-name">firewall/</div>
+                    <div class="module-desc">Firewall rules</div>
+                </div>
+            </div>
+
+            <!-- Compute Resources -->
+            <div class="section" style="left: 680px; top: 20px; width: 280px;">
+                <div class="section-title">⚙️ Compute Resources</div>
+                <div class="module">
+                    <div class="module-name">gke_cluster/</div>
+                    <div class="module-desc">Kubernetes clusters</div>
+                </div>
+                <div class="module">
+                    <div class="module-name">cloud_run/</div>
+                    <div class="module-desc">Serverless containers</div>
+                </div>
+                <div class="module">
+                    <div class="module-name">compute_instance/</div>
+                    <div class="module-desc">VM instances</div>
+                </div>
+            </div>
+
+            <!-- Data & Storage -->
+            <div class="section" style="left: 1000px; top: 20px; width: 280px;">
+                <div class="section-title">💾 Data & Storage</div>
+                <div class="module">
+                    <div class="module-name">cloud_sql/</div>
+                    <div class="module-desc">Managed databases</div>
+                </div>
+                <div class="module">
+                    <div class="module-name">storage_bucket/</div>
+                    <div class="module-desc">Object storage</div>
+                </div>
+                <div class="module">
+                    <div class="module-name">pubsub/</div>
+                    <div class="module-desc">Messaging service</div>
+                </div>
+            </div>
+
+            <!-- Traffic Management -->
+            <div class="section" style="left: 360px; top: 330px; width: 280px;">
+                <div class="section-title">🚦 Traffic Management</div>
+                <div class="module">
+                    <div class="module-name">load_balancer/</div>
+                    <div class="module-desc">Load balancing</div>
+                </div>
+                <div class="module">
+                    <div class="module-name">cdn_and_dns/</div>
+                    <div class="module-desc">CDN & DNS config</div>
+                </div>
+            </div>
+
+            <!-- Security -->
+            <div class="section" style="left: 680px; top: 330px; width: 280px;">
+                <div class="section-title">🔐 Security</div>
+                <div class="module">
+                    <div class="module-name">iam/</div>
+                    <div class="module-desc">Identity & Access Management</div>
+                </div>
+            </div>
+
+            <!-- GCP Resources -->
+            <div class="section" style="left: 20px; top: 550px; width: 1260px;">
+                <div class="section-title" style="color: white; background: #4285f4; padding: 8px; margin: -15px -15px 15px -15px; border-radius: 6px 6px 0 0;">☁️ Google Cloud Platform Resources</div>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;">
+                    <div class="module gcp-resource">
+                        <div class="module-name">VPC Network</div>
+                        <div class="module-desc">Virtual Private Cloud</div>
+                    </div>
+                    <div class="module gcp-resource">
+                        <div class="module-name">GKE Cluster</div>
+                        <div class="module-desc">Kubernetes Engine</div>
+                    </div>
+                    <div class="module gcp-resource">
+                        <div class="module-name">Cloud Run</div>
+                        <div class="module-desc">Serverless Platform</div>
+                    </div>
+                    <div class="module gcp-resource">
+                        <div class="module-name">Cloud SQL</div>
+                        <div class="module-desc">Managed Database</div>
+                    </div>
+                    <div class="module gcp-resource">
+                        <div class="module-name">Cloud Storage</div>
+                        <div class="module-desc">Object Storage</div>
+                    </div>
+                    <div class="module gcp-resource">
+                        <div class="module-name">Pub/Sub</div>
+                        <div class="module-desc">Messaging Service</div>
+                    </div>
+                    <div class="module gcp-resource">
+                        <div class="module-name">Load Balancer</div>
+                        <div class="module-desc">Global LB</div>
+                    </div>
+                    <div class="module gcp-resource">
+                        <div class="module-name">Cloud CDN</div>
+                        <div class="module-desc">Content Delivery</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-box" style="background: #e8f0fe; border: 2px solid #1967d2;"></div>
+                <span>Root Configuration Files</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background: white; border: 2px solid #4285f4;"></div>
+                <span>Terraform Modules</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);"></div>
+                <span>GCP Resources</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function downloadDiagram() {
+            // Use html2canvas if available, otherwise show instructions
+            alert('To download as PNG:\n\n1. Right-click on the diagram\n2. Select "Save as image" or take a screenshot\n\nOr use browser extensions like "Full Page Screen Capture" for best quality.');
+        }
+    </script>
+</body>
+</html>
