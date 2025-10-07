@@ -1,17 +1,3 @@
-terraform {
-  required_providers {
-    google = {
-      source  = "hashicorp/google"
-      version = ">= 4.0"
-    }
-  }
-}
-
-provider "google" {
-  project = var.project
-  # credentials = file(var.credentials_file)
-}
-
 # Reserve Global Static IP
 resource "google_compute_global_address" "default" {
   name = "${var.name}-ip"

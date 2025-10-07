@@ -183,7 +183,7 @@
     "project": "playground-s-11-4dd577ac",
     "region": "us-central1",
     "service_name": "my-cloudrun-service",
-    "image": "mariomafdy/teamavailtest:latest",
+    "docker-image": "mariomafdy/teamavailtest:latest",
     "allow_unauthenticated": true
   },
 

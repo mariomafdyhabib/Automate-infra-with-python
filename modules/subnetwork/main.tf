@@ -1,17 +1,3 @@
-terraform {
-  required_providers {
-    google = {
-      source  = "hashicorp/google"
-      version = ">= 4.0"
-    }
-  }
-}
-
-provider "google" {
-  project = var.project
-  region  = var.region
-  # credentials = file(var.credentials_file)
-}
 
 # ✅ Use data source to fetch existing VPC info dynamically
 data "google_compute_network" "existing_vpc" {

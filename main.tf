@@ -12,39 +12,40 @@ terraform {
   }
 
   # backend "gcs" {
-  #   bucket = "tf-state-${var.project_id}"
+  #   bucket = "tf-state-${var.project}"
   #   prefix = "terraform/state"
   # }
 }   
 
 provider "google" {
-  project = var.project_id
+  project = var.project
   region  = var.region
   zone    = var.zone
   credentials = file(var.credentials_file)
 }
 
-provider "google-beta" {
-  project = var.project_id
-  region  = var.region
-  zone    = var.zone
-}
+# provider "google-beta" {
+#   project = var.project
+#   region  = var.region
+#   zone    = var.zone
+# }
 
 # Enable required APIs
-resource "google_project_service" "apis" {
-  for_each = toset(var.required_apis)
-  project  = var.project_id
-  service  = each.key
+# resource "google_project_service" "apis" {
+#   # for_each = toset(var.required_apis)
+#   project  = var.project
+#   service  = each.key
 
-  disable_dependent_services = true
-  disable_on_destroy         = false
-}
+#   disable_dependent_services = true
+#   disable_on_destroy         = false
+# }
 
 # Network Module
 module "network" {
   source = "./modules/network"
+  count  = var.enable_network ? 1 : 0
 
-  project            = var.project_id
+  project            = var.project
   network_name       = var.network_name
 
 }
@@ -52,12 +53,13 @@ module "network" {
 # Declare subnets variable
 module "subnetwork" {
   source = "./modules/subnetwork"
+  count  = var.enable_network ? 1 : 0
 
-  project         = var.project_id
+  project         = var.project
   region          = var.region
-  network_id      = module.network.network_id
-  subnets         = module.subnetwork.var.subnets
-  credentials_file = var.credentials_file
+  network_id      = var.network_id
+  subnets         = var.subnets
+  
 
 }
 
@@ -66,8 +68,9 @@ module "subnetwork" {
 # Storage Bucket Module
 module "storage_bucket" {
   source = "./modules/storage_bucket"
+  count  = var.enable_network ? 1 : 0
 
-  project = var.project_id
+  project = var.project
   buckets = [
     {
       name          = var.bucket_name
@@ -82,26 +85,28 @@ module "storage_bucket" {
 # Firewall Module
 module "firewall" {
   source = "./modules/firewall"
+  count  = var.enable_network ? 1 : 0
 
-  project        = var.project_id
-  network_id     = module.network.network_id
-  firewall_rules = module.firewall.var.firewall_rules
+  project        = var.project
+  network_id     = var.network_id
+  firewall_rules = var.firewall_rules
 
 }
 
 # Cloud SQL Module
 module "cloud_sql" {
   source = "./modules/cloud_sql"
+  count  = var.enable_network ? 1 : 0
 
-  project           = var.project_id
+  project           = var.project
   region            = var.region
   instance_name     = var.cloud_sql_instance_name
   database_version  = var.database_version
   tier              = var.db_tier
   disk_size         = var.db_disk_size
-  db_name           = module.cloud_sql.db_name
-  db_user           = module.cloud_sql.db_user
-  db_password       = module.cloud_sql.db_password
+  db_name           = var.db_name
+  db_user           = var.db_user
+  db_password       = var.db_password
   
 
 }
@@ -109,21 +114,25 @@ module "cloud_sql" {
 # Compute Instance Module
 module "compute_instance" {
   source = "./modules/compute_instance"
+  count  = var.enable_network ? 1 : 0
 
-  project      = var.project_id
+  project      = var.project
   zone         = var.zone
-  network      = module.network.network_name
-  subnetwork   = module.subnetwork.subnet_names[0]
-  instance_name = var.instance_name
-  machine_type  = var.machine_type
-  image         = var.image
+  network      = var.network_name
+  subnetwork   = var.subnetwork
+  # instance_name = var.instances[0].name
+  # machine_type  = var.instances[0].machine_type
+  # image         = var.instances[0].image
+
+
 }
 
 # GKE Cluster Module
 module "gke_cluster" {
   source = "./modules/gke_cluster"
+  count  = var.enable_network ? 1 : 0
 
-  project      = var.project_id
+  project      = var.project
   region       = var.region
   cluster_name = var.cluster_name
   network      = module.network.network_name
@@ -134,8 +143,9 @@ module "gke_cluster" {
 # Pub/Sub Module
 module "pub_sub" {
   source = "./modules/pubsub"
+  count  = var.enable_network ? 1 : 0
 
-  project = var.project_id
+  project = var.project
   topics  = [for topic in var.pubsub_topics : topic.name]
 
 }
@@ -143,8 +153,9 @@ module "pub_sub" {
 # Load Balancer Module
 module "load_balancer" {
   source = "./modules/load_balancer"
+  count  = var.enable_network ? 1 : 0
 
-  project        = var.project_id
+  project        = var.project
   region         = var.region
   name           = var.lb_name
   ip_address     = var.lb_ip_address
@@ -155,28 +166,31 @@ module "load_balancer" {
 # IAM Module
 module "iam" {
   source = "./modules/iam"
+  count  = var.enable_network ? 1 : 0
 
-  project = var.project_id
+  project = var.project
 
 }
 
 # Cloud Run Module
 module "cloud_run" {
   source = "./modules/cloud_run"
+  count  = var.enable_network ? 1 : 0
 
-  project = var.project_id
+  project = var.project
   region  = var.region
-  name    = var.cloud_run_service_name
-  image   = var.cloud_run_image
+  name    = var.service_name
+  image   = var.docker-image
 
 }
 
 # CDN & DNS Module
 module "cdn_and_dns" {
   source      = "./modules/cdn_and_dns"
-  name        = var.name
-  bucket_name = var.bucket_name
-  project     = var.project_id
-  domain      = var.domain
+  count  = var.enable_network ? 1 : 0
+  name        = var.dns_managed_zone
+  bucket_name = var.cdn_backend_bucket
+  project     = var.project
+  domain      = var.dns_name
 
 }

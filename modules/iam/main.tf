@@ -1,16 +1,3 @@
-terraform {
-  required_providers {
-    google = {
-      source  = "hashicorp/google"
-      version = ">= 4.0"
-    }
-  }
-}
-
-provider "google" {
-  project = var.project
-  # credentials = file(var.credentials_file)
-}
 
 # Service Accounts
 resource "google_service_account" "service_accounts" {

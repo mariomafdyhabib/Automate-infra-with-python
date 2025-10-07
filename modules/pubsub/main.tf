@@ -1,17 +1,3 @@
-terraform {
-  required_providers {
-    google = {
-      source  = "hashicorp/google"
-      version = ">= 4.0"
-    }
-  }
-}
-
-provider "google" {
-  project = var.project
-  region  = var.region
-  # credentials = file(var.credentials_file)
-}
 
 # Create Pub/Sub Topics
 resource "google_pubsub_topic" "topics" {

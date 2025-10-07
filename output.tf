@@ -104,7 +104,7 @@ output "dns_zone_names" {
 # Project Outputs
 output "project_id" {
   description = "Project ID"
-  value       = var.project_id
+  value       = var.project
 }
 
 output "region" {
